@@ -1,6 +1,6 @@
 const pool = require("../../config/db");
 
-async function findAll() {
+async function findOne() {
   const data = await pool.pquery("select * from process where sid=? ", [
     "202002",
   ]);
@@ -8,5 +8,5 @@ async function findAll() {
 }
 
 module.exports = {
-  findAll,
+  findOne: findOne,
 };
