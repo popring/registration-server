@@ -1,9 +1,12 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.send('这是首页')
-});
+const commonRouter = require("./common");
+const studentRouter = require("./student");
+const adminRouter = require("./admin");
 
-module.exports = router;
+module.exports = (app) => {
+  app.use("/", commonRouter);
+  app.use("/v1/stu", studentRouter);
+  app.use("/v1/admin", adminRouter);
+};
