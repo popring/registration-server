@@ -10,7 +10,7 @@ const PRIVATEKEY = require("../config/key");
  */
 async function stuLogin(username, userpwd) {
   let res = await pool.pquery(
-    "select sid,sname,sbirth,spolitics,sidcard,sschool,smajor,sphone from student where sid=? and spwd=?",
+    "select sid,sname from student where sid=? and spwd=?",
     [username, userpwd]
   );
 
@@ -41,7 +41,7 @@ async function stuLogin(username, userpwd) {
  */
 async function adminLogin(username, userpwd) {
   let res = await pool.pquery(
-    "select * from admin where (aid=? or aname=?) and apwd=?",
+    "select aid,aname from admin where (aid=? or aname=?) and apwd=?",
     [username, username, userpwd]
   );
 
