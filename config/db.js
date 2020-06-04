@@ -26,6 +26,9 @@ try {
  */
 pool.pquery = function (sql, values = []) {
   if (!sql) return {};
+  if (!Array.isArray(values) || typeof values !== "object") {
+    values = [values];
+  }
   return new Promise(function (resolve, reject) {
     pool.query(sql, values, function (error, results, fileds) {
       if (error) {
