@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   StuLoginController,
   VerifyController,
-  AdminLogin,
+  AdminLoginController: AdminLogin,
 } = require("../controller/Account");
 const Tips = require("../config/Tips");
 

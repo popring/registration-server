@@ -8,10 +8,13 @@ const PRIVATEKEY = require("../config/key");
  * @param {string}} username 用户名
  * @param {string} userpwd 密码
  */
-async function stuLogin(username, userpwd) {
+async function stuLogin(username, userpwd, role = "student") {
+  if (role !== "student") {
+    return {};
+  }
   let res = await pool.pquery(
-    "select sid,sname from student where sid=? and spwd=?",
-    [username, userpwd]
+    "select sid,sname,sphone from student where (sid=? or sphone=?) and spwd=?",
+    [username, username, userpwd]
   );
 
   // 登录失败
@@ -22,7 +25,8 @@ async function stuLogin(username, userpwd) {
   const payload = {
     id: res.sid,
     username: res.sname,
-    role: "student",
+    role: role,
+    phone: res.sphone
   };
 
   const token = jwt.sign(payload, PRIVATEKEY, {
@@ -31,6 +35,7 @@ async function stuLogin(username, userpwd) {
   return {
     ...Tips.LOGIN_SUCCESS,
     token: token,
+    payload,
   };
 }
 
@@ -61,6 +66,7 @@ async function adminLogin(username, userpwd) {
   });
   return {
     ...Tips.LOGIN_SUCCESS,
+    payload,
     token: token,
   };
 }
@@ -92,6 +98,6 @@ function verfiy(token) {
 
 module.exports = {
   StuLoginController: stuLogin,
-  AdminLogin: adminLogin,
+  AdminLoginController: adminLogin,
   VerifyController: verfiy,
 };
