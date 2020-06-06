@@ -24,9 +24,9 @@ try {
 /**
  * 使用 Promise 封装 query 方法
  */
-pool.pquery = function (sql, values = []) {
+pool.pquery = function (sql, values = {}) {
   if (!sql) return {};
-  if (!Array.isArray(values) || typeof values !== "object") {
+  if (!Array.isArray(values) && typeof values !== "object") {
     values = [values];
   }
   return new Promise(function (resolve, reject) {

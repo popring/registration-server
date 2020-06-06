@@ -1,0 +1,30 @@
+const pool = require("../../config/db");
+
+// 学生提交个人信息
+async function submitApply(userData) {
+  const data = await pool.pquery(
+    `UPDATE student SET Sbirth=?, Spolitics=?, Sidcard=?, Sschool=?, Smajor=?  WHERE sid= ?`,
+    [
+      userData.sbirth,
+      userData.spolitics,
+      userData.sidcard,
+      userData.sschool,
+      userData.smajor,
+      userData.sid,
+    ]
+  );
+  if (data.changedRows === 1) {
+    return {
+      code: 1,
+      message: "提交信息成功",
+    };
+  }
+  return {
+    code: 0,
+    message: "提交信息失败，请稍后重试",
+  };
+}
+
+module.exports = {
+  submitApply,
+};
