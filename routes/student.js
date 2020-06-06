@@ -37,6 +37,11 @@ router.post("/apply", async function (req, res) {
   res.send(data);
 });
 
+router.get('/pay', async function(req, res) {
+  const data = await ControllerApply.payMoney(res.userinfo.id);
+  res.send(data);
+})
+
 // 查询考试成绩
 router.get("/score", async function (req, res) {
   const data = await ControllerScore.findScore(res.userinfo.id);

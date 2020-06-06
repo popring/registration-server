@@ -14,10 +14,15 @@ async function submitApply(userData) {
     ]
   );
   if (data.changedRows === 1) {
-    return {
-      code: 1,
-      message: "提交信息成功",
-    };
+    const afterData = await pool.pquery("UPDATE process SET apply=1 where Sid=?", [
+      userData.sid,
+    ]);
+    if (afterData.changedRows === 1) {
+      return {
+        code: 1,
+        message: "提交信息成功",
+      };
+    }
   }
   return {
     code: 0,
@@ -25,6 +30,22 @@ async function submitApply(userData) {
   };
 }
 
+// 支付操作
+async function payMoney(id) {
+  const data = await pool.pquery('UPDATE process SET pay=1 WHERE sid=?', [id])
+  if(data.changedRows === 1) {
+    return {
+      code: 1,
+      message: "支付成功",
+    };
+  }
+  return {
+    code: 0,
+    message: "支付失败，请重试",
+  };
+}
+
 module.exports = {
   submitApply,
+  payMoney
 };
