@@ -3,8 +3,9 @@ const pool = require("../../config/db");
 // 学生提交个人信息
 async function submitApply(userData) {
   const data = await pool.pquery(
-    `UPDATE student SET Sbirth=?, Spolitics=?, Sidcard=?, Sschool=?, Smajor=?  WHERE sid= ?`,
+    `UPDATE student SET Sname=? Sbirth=?, Spolitics=?, Sidcard=?, Sschool=?, Smajor=?  WHERE sid= ?`,
     [
+      userData.sname,
       userData.sbirth,
       userData.spolitics,
       userData.sidcard,
