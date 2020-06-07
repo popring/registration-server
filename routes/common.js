@@ -1,10 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {
-  StuLoginController,
-  VerifyController,
-  AdminLoginController: AdminLogin,
-} = require("../controller/Account");
+const Account = require("../controller/Account");
 const Tips = require("../config/Tips");
 
 // test index
@@ -39,10 +35,16 @@ router.post("/login", async function (req, res) {
   let result = null;
   switch (userinfo.role) {
     case "student":
-      result = await StuLoginController(userinfo.username, userinfo.userpwd);
+      result = await Account.StuLoginController(
+        userinfo.username,
+        userinfo.userpwd
+      );
       break;
     case "admin":
-      result = await AdminLogin(userinfo.username, userinfo.userpwd);
+      result = await Account.AdminLoginController(
+        userinfo.username,
+        userinfo.userpwd
+      );
       break;
     default:
       result = Tips.INFO_ERROR;
@@ -51,11 +53,18 @@ router.post("/login", async function (req, res) {
   res.send(result);
 });
 
+// 新用户(学生)注册
+router.post("/signup", async function (req, res) {
+  // 手机号，密码
+  const data = await Account.StuSignUpController(req.body);
+  res.send(data);
+});
+
 // test valid token
 router.post("/ttoken", function (req, res) {
   // 从http信息头获取token
   const token = req.get("token");
-  const result = VerifyController(token);
+  const result = Account.VerifyController(token);
   res.json(result);
 });
 

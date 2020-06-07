@@ -37,9 +37,16 @@ router.post("/apply", async function (req, res) {
   res.send(data);
 });
 
+// 支付操作
 router.get('/pay', async function(req, res) {
   const data = await ControllerApply.payMoney(res.userinfo.id);
   res.send(data);
+})
+
+// 获取所有专业信息
+router.get('/major', async function(req, res) {
+  const data = await ControllerApply.findAllMajor();
+  res.send(data)
 })
 
 // 查询考试成绩

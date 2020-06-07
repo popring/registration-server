@@ -26,7 +26,7 @@ async function stuLogin(username, userpwd, role = "student") {
     id: res.sid,
     username: res.sname,
     role: role,
-    phone: res.sphone
+    phone: res.sphone,
   };
 
   const token = jwt.sign(payload, PRIVATEKEY, {
@@ -71,6 +71,25 @@ async function adminLogin(username, userpwd) {
   };
 }
 
+async function stuSignUp(newUserInfo) {
+  // 手机号，密码
+  const data = await pool.pquery(
+    `INSERT INTO student (Sphone, Spwd) VALUE(?, ?)`,
+    [newUserInfo.sphone, newUserInfo.userpwd]
+  );
+  console.log(data)
+  if (data.affectedRows === 1) {
+    return {
+      code: 1,
+      message: "注册成功",
+    };
+  }
+  return {
+    code: 1,
+    message: "注册失败，请联系管理员",
+  };
+}
+
 /**
  * 验证token是否有效
  * @param {string} token 用户唯一标识
@@ -100,4 +119,5 @@ module.exports = {
   StuLoginController: stuLogin,
   AdminLoginController: adminLogin,
   VerifyController: verfiy,
+  StuSignUpController: stuSignUp,
 };
