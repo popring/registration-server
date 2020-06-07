@@ -1,3 +1,7 @@
+# SQL 文件
+
+导入数据库 /sql/bmxt.sql
+
 任务
 
 - [x] jwt 鉴权< `student`, `admin` >
