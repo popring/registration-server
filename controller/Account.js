@@ -22,11 +22,17 @@ async function stuLogin(username, userpwd, role = "student") {
     return Tips.LOGIN_ERROR;
   }
   res = res[0];
+  // 查询学生报名进度
+  let resProcess = await pool.pquery(
+    "select apply,pay,`check`,addgrade,offer from process where sid=?",
+    [res.sid]
+  );
   const payload = {
     id: res.sid,
     username: res.sname,
     role: role,
     phone: res.sphone,
+    process: resProcess[0],
   };
 
   const token = jwt.sign(payload, PRIVATEKEY, {
@@ -46,7 +52,7 @@ async function stuLogin(username, userpwd, role = "student") {
  */
 async function adminLogin(username, userpwd) {
   let res = await pool.pquery(
-    "select aid,aname from admin where (aid=? or aname=?) and apwd=?",
+    "select aid,aname from admin where aname=? and apwd=?",
     [username, username, userpwd]
   );
 
@@ -77,7 +83,7 @@ async function stuSignUp(newUserInfo) {
     `INSERT INTO student (Sphone, Spwd) VALUE(?, ?)`,
     [newUserInfo.sphone, newUserInfo.userpwd]
   );
-  console.log(data)
+  console.log(data);
   if (data.affectedRows === 1) {
     return {
       code: 1,
