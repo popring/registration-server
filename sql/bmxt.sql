@@ -11,7 +11,7 @@
  Target Server Version : 50547
  File Encoding         : 65001
 
- Date: 07/06/2020 09:07:11
+ Date: 09/06/2020 13:03:04
 */
 
 SET NAMES utf8mb4;
@@ -79,6 +79,9 @@ INSERT INTO `grade` VALUES (202002, 4, 70);
 INSERT INTO `grade` VALUES (202003, 2, 72);
 INSERT INTO `grade` VALUES (202003, 3, 80);
 INSERT INTO `grade` VALUES (202003, 4, 78);
+INSERT INTO `grade` VALUES (202012, 2, 23);
+INSERT INTO `grade` VALUES (202012, 3, 87);
+INSERT INTO `grade` VALUES (202012, 4, 98);
 
 -- ----------------------------
 -- Table structure for major
@@ -123,20 +126,27 @@ INSERT INTO `notice` VALUES (3, 2, '专升本新生入学通知', '一、“专�
 DROP TABLE IF EXISTS `process`;
 CREATE TABLE `process`  (
   `Sid` int(11) NOT NULL,
-  `apply` int(11) NULL DEFAULT NULL COMMENT '报名（0未提交报名申请，1已提交）',
-  `pay` int(11) NULL DEFAULT NULL COMMENT '缴费（0 未缴费，1已缴费）',
-  `check` int(11) NULL DEFAULT NULL COMMENT '审核(0 待审核，1审核通过，2审核不通过)',
-  `addgrade` int(11) NULL DEFAULT NULL COMMENT '添加成绩（0未添加，1已添加）',
-  `offer` int(11) NULL DEFAULT NULL COMMENT '录取状态(0表示等待录取，1表示录取，2表示未被录取)',
+  `apply` int(11) NULL DEFAULT 0 COMMENT '报名（0未提交报名申请，1已提交）',
+  `pay` int(11) NULL DEFAULT 0 COMMENT '缴费（0 未缴费，1已缴费）',
+  `check` int(11) NULL DEFAULT 0 COMMENT '审核(0 待审核，1审核通过，2审核不通过)',
+  `addgrade` int(11) NULL DEFAULT 0 COMMENT '添加成绩（0未添加，1已添加）',
+  `offer` int(11) NULL DEFAULT 0 COMMENT '录取状态(0表示等待录取，1表示录取，2表示未被录取)',
   PRIMARY KEY (`Sid`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of process
 -- ----------------------------
-INSERT INTO `process` VALUES (202001, 0, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202001, 1, 1, 0, 0, 0);
 INSERT INTO `process` VALUES (202002, 1, 1, 1, 1, 1);
 INSERT INTO `process` VALUES (202003, 0, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202007, 0, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202008, 0, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202009, 0, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202010, 0, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202011, 1, 1, 1, 0, 0);
+INSERT INTO `process` VALUES (202012, 1, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202013, 0, 0, 0, 0, 0);
 
 -- ----------------------------
 -- Table structure for student
@@ -144,7 +154,7 @@ INSERT INTO `process` VALUES (202003, 0, 0, 0, 0, 0);
 DROP TABLE IF EXISTS `student`;
 CREATE TABLE `student`  (
   `Sid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id（202001）',
-  `Sname` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '姓名',
+  `Sname` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '姓名',
   `Spwd` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '密码',
   `Sbirth` date NULL DEFAULT NULL COMMENT '出生日期',
   `Spolitics` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '政治面貌',
@@ -155,15 +165,33 @@ CREATE TABLE `student`  (
   PRIMARY KEY (`Sid`, `Sphone`) USING BTREE,
   INDEX `mid`(`Smajor`) USING BTREE,
   CONSTRAINT `mid` FOREIGN KEY (`Smajor`) REFERENCES `major` (`mid`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 202006 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 202014 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of student
 -- ----------------------------
-INSERT INTO `student` VALUES (202001, '李四', '123', '2002-01-01', '团员', '441800198903289750', '武汉学院', 3001, '13245678901');
+INSERT INTO `student` VALUES (202001, '李亚', '123', '2020-06-05', '群众', '141126190512143939', '武汉学院', 3001, '13245678901');
 INSERT INTO `student` VALUES (202002, '张三', '123', '2020-01-01', '群众x', '441800398903289750', '武汉学院xx', 3002, '13245678909');
 INSERT INTO `student` VALUES (202003, '陈乔', '123', '2020-01-01', NULL, '441800398903289750', NULL, 3002, '15935678939');
 INSERT INTO `student` VALUES (202004, '王楠', '123', '2020-01-01', '群众', '441800198903289751', '武汉学院', 3001, '15935678902');
 INSERT INTO `student` VALUES (202005, '赵佳', '123', '1997-03-20', '团员', '542121197601289652', '湖北理工学院', 3001, '13345671234');
+INSERT INTO `student` VALUES (202007, NULL, '123', NULL, NULL, NULL, NULL, NULL, '17582912152');
+INSERT INTO `student` VALUES (202008, NULL, '123', NULL, NULL, NULL, NULL, NULL, '17129904573');
+INSERT INTO `student` VALUES (202009, NULL, '123', NULL, NULL, NULL, NULL, NULL, '17129904573');
+INSERT INTO `student` VALUES (202010, NULL, '123', NULL, NULL, NULL, NULL, NULL, '17129904573');
+INSERT INTO `student` VALUES (202011, '张三丰', '123', '2002-01-10', '团员', '441800198903289750', '武汉学院', 3002, '17060148893');
+INSERT INTO `student` VALUES (202012, '王炸', '123', '2019-11-12', '群众', '141126190512143939', '武汉学院', 3002, '15874322134');
+INSERT INTO `student` VALUES (202013, NULL, '123', NULL, NULL, NULL, NULL, NULL, '18571568737');
+
+-- ----------------------------
+-- Triggers structure for table student
+-- ----------------------------
+DROP TRIGGER IF EXISTS `addStuProcess`;
+delimiter ;;
+CREATE TRIGGER `addStuProcess` AFTER INSERT ON `student` FOR EACH ROW BEGIN
+INSERT INTO process(Sid) values(NEW.Sid);
+END
+;;
+delimiter ;
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -53,7 +53,7 @@ async function stuLogin(username, userpwd, role = "student") {
 async function adminLogin(username, userpwd) {
   let res = await pool.pquery(
     "select aid,aname from admin where aname=? and apwd=?",
-    [username, username, userpwd]
+    [username, userpwd]
   );
 
   // 登录失败
