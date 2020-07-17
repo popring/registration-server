@@ -27,7 +27,7 @@ Process.init(
   },
   {
     sequelize,
-    modelName: "Process",
+    modelName: "process",
     timestamps: false,
     freezeTableName: true,
     // tableName: "process",

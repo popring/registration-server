@@ -2,9 +2,9 @@ const Sequelize = require("sequelize");
 const sequelize = require("../config/database");
 
 const Model = Sequelize.Model;
-class Students extends Model {}
+class Student extends Model {}
 
-Students.init(
+Student.init(
   {
     sid: {
       type: Sequelize.INTEGER,
@@ -41,7 +41,7 @@ Students.init(
     // 数据库配置
     sequelize,
     // model 名称
-    modelName: "Students",
+    modelName: "student",
     timestamps: false,
     // 禁止修改表名
     freezeTableName: true,
@@ -50,4 +50,4 @@ Students.init(
   }
 );
 
-module.exports = Students;
+module.exports = Student;

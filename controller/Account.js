@@ -2,7 +2,7 @@ const pool = require("../config/db");
 const Tips = require("../config/Tips");
 const jwt = require("jsonwebtoken");
 const PRIVATEKEY = require("../config/key");
-const Students = require("../models/student");
+const Student = require("../models/student");
 const Process = require("../models/process");
 
 const Sequelize = require("sequelize");
@@ -18,7 +18,7 @@ async function stuLogin(sidOrSphone, userpwd, role = "student") {
     return {};
   }
 
-  let res = await Students.findOne({
+  let res = await Student.findOne({
     attributes: ["sid", "sname", "sphone"],
     where: {
       [Op.or]: [{ sid: sidOrSphone }, { sphone: sidOrSphone }],
