@@ -2,36 +2,48 @@ const pool = require("../config/db");
 const Tips = require("../config/Tips");
 const jwt = require("jsonwebtoken");
 const PRIVATEKEY = require("../config/key");
+const Students = require("../models/student");
+const Process = require("../models/process");
+
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 /**
  * 学生登录
  * @param {string}} username 用户名
  * @param {string} userpwd 密码
  */
-async function stuLogin(username, userpwd, role = "student") {
+async function stuLogin(sidOrSphone, userpwd, role = "student") {
   if (role !== "student") {
     return {};
   }
-  let res = await pool.pquery(
-    "select sid,sname,sphone from student where (sid=? or sphone=?) and spwd=?",
-    [username, username, userpwd]
-  );
+
+  let res = await Students.findOne({
+    attributes: ["sid", "sname", "sphone"],
+    where: {
+      [Op.or]: [{ sid: sidOrSphone }, { sphone: sidOrSphone }],
+      spwd: userpwd,
+    },
+  });
 
   // 登录失败
-  if (res.length !== 1) {
+  if (res === null) {
     return Tips.LOGIN_ERROR;
   }
-  res = res[0];
+
+  const dataValue = res.dataValues;
   // 查询学生报名进度
-  let resProcess = await pool.pquery(
-    "select apply,pay,`check`,addgrade,offer from process where sid=?",
-    [res.sid]
-  );
+  let resProcess = await Process.findOne({
+    attributes: ["sid", "apply", "pay", "check", "addgrade", "offer"],
+    where: {
+      sid: dataValue.sid,
+    },
+  });
   const payload = {
-    id: res.sid,
-    username: res.sname,
+    id: dataValue.sid,
+    username: dataValue.sname,
     role: role,
-    phone: res.sphone,
+    phone: dataValue.sphone,
     process: resProcess[0],
   };
 
@@ -40,7 +52,7 @@ async function stuLogin(username, userpwd, role = "student") {
   });
   return {
     ...Tips.LOGIN_SUCCESS,
-    token: token,
+    token,
     payload,
   };
 }
