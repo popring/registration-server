@@ -1,53 +1,31 @@
-const Sequelize = require("sequelize");
-const sequelize = require("../config/database");
-
-const Model = Sequelize.Model;
-class Student extends Model {}
-
-Student.init(
-  {
-    sid: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
+module.exports = (sequelize, DataTypes) => {
+  const Student = sequelize.define("Student", {
+      Sid: {
+        type: DataTypes.NUMBER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      Sphone: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      Spwd: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      Sname: DataTypes.STRING,
+      Sbirth: DataTypes.DATE,
+      Spolitics: DataTypes.STRING,
+      Sidcard: DataTypes.STRING(18),
+      Sschool: DataTypes.STRING,
+      Smajor: DataTypes.INTEGER,
     },
-    sphone: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    spwd: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    sname: {
-      type: Sequelize.STRING,
-    },
-    sbirth: {
-      type: Sequelize.DATE,
-    },
-    spolitics: {
-      type: Sequelize.STRING,
-    },
-    sidcard: {
-      type: Sequelize.STRING(18),
-    },
-    sschool: {
-      type: Sequelize.STRING,
-    },
-    smajor: {
-      type: Sequelize.INTEGER,
-    },
-  },
-  {
-    // 数据库配置
-    sequelize,
-    // model 名称
-    modelName: "student",
-    timestamps: false,
-    // 禁止修改表名
-    freezeTableName: true,
-    // 表的名称
-    tableName: "student",
-  }
-);
-
-module.exports = Student;
+    {
+      timestamps: false,
+      // 禁止修改表名
+      freezeTableName: true,
+      // 表的名称
+      tableName: "student",
+    });
+  return Student;
+};

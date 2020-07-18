@@ -1,37 +1,35 @@
-const Sequelize = require("sequelize");
-const sequelize = require("../config/database");
+module.exports = (sequelize, DataTypes) => {
+  const Process = sequelize.define("Process", {
+      Sid: {
+        type: DataTypes.NUMBER,
+        primaryKey: true,
+      },
+      apply: {
+        type: DataTypes.NUMBER,
+        allowNull: false,
+      },
+      pay: {
+        type: DataTypes.NUMBER,
+        allowNull: false,
+      },
+      check: {
+        type: DataTypes.NUMBER,
+        allowNull: false,
+      },
+      addgrade: {
+        type: DataTypes.NUMBER,
+        allowNull: false,
+      },
+      offer: {
+        type: DataTypes.NUMBER,
+        allowNull: false,
+      },
+    },
+    {
+      timestamps: false,
+      freezeTableName: true,
+      tableName: "process",
+    });
+  return Process;
+};
 
-class Process extends Sequelize.Model {}
-
-Process.init(
-  {
-    sid: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-    },
-    apply: {
-      type: Sequelize.INTEGER,
-    },
-    pay: {
-      type: Sequelize.INTEGER,
-    },
-    check: {
-      type: Sequelize.INTEGER,
-    },
-    addgrade: {
-      type: Sequelize.INTEGER,
-    },
-    offer: {
-      type: Sequelize.INTEGER,
-    },
-  },
-  {
-    sequelize,
-    modelName: "process",
-    timestamps: false,
-    freezeTableName: true,
-    // tableName: "process",
-  }
-);
-
-module.exports = Process;
