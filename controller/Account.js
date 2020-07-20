@@ -7,8 +7,9 @@ const Op = models.Sequelize.Op;
 
 /**
  * 学生登录
- * @param {string}} username 用户名
- * @param {string} userpwd 密码
+ * @param sidOrSphone sid或手机号码
+ * @param userpwd 密码
+ * @param role  角色
  */
 async function stuLogin (sidOrSphone, userpwd, role = "student") {
   if (role !== "student") {
@@ -91,7 +92,7 @@ async function adminLogin (username, userpwd) {
 
 /**
  * 学生注册
- * @param newUserInfo
+ * @param newUserInfo 学生注册信息
  * @returns {Promise<{code: number, message: string}>}
  */
 async function stuSignUp (newUserInfo) {
