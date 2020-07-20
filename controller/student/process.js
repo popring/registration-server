@@ -1,10 +1,18 @@
-const pool = require("../../config/db");
+const models = require("../../models");
+const tips = require("../../config/Tips");
 
-async function findOne(sid) {
-  const data = await pool.pquery("select apply, pay, `check`, addgrade, offer from process where sid=? ", [sid]);
-  return data[0];
+async function findOne (sid) {
+  const process = await models.Process.findOne({
+    where: {
+      sid,
+    },
+  });
+  return {
+    ...tips.GET_INFO_SUCCESS,
+    data: process.dataValues,
+  };
 }
 
 module.exports = {
-  findOne: findOne,
+  findOne,
 };

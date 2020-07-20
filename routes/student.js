@@ -11,7 +11,7 @@ router.use("/", stuAuth);
 // 学生报名进度查询
 router.get("/process", async function (req, res) {
   const data = await ControllerProcess.findOne(res.userinfo.id);
-  res.send({ code: 1, data });
+  res.send(data);
 });
 
 // test 接口

@@ -25,4 +25,6 @@ module.exports = {
   PAY_SUCCESS: { code: 1, message: "支付成功" },
   // 支付失败
   PAY_ERROR: { code: 0, message: "支付失败，请重试" },
+  // 学生成绩信息为空
+  SCORE_NULL: { code: 1, message: "当前学生暂时没有成绩，请等待管理员录入信息", data: null },
 };
