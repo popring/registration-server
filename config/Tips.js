@@ -1,8 +1,12 @@
 module.exports = {
   // 操作成功
-  OPERATE_SUCCESS: { code: 1, message: "success" },
-  // 操作成功
-  OPERATE_FAILED: { code: 1, message: "failed" },
+  OPERATE_SUCCESS: { code: 1, message: "操作成功" },
+  // 操作失败
+  OPERATE_FAILED: { code: -1, message: "操作失败" },
+  // 获取信息成功
+  GET_INFO_SUCCESS: { code: 1, message: "success" },
+  // 获取信息失败
+  GET_INFO_FAILED: { code: -1, message: "failed" },
   // 信息不完整
   INFO_INCOMPLETE: { code: 0, message: "信息不完整，请输入完整后重试" },
   // 信息有误

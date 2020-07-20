@@ -22,7 +22,7 @@ router.get("/test", function (req, res) {
 // 查询公告
 router.get("/notice", async function (req, res) {
   const data = await ControllerNotice.findAll();
-  res.send({ code: 1, data });
+  res.send(data);
 });
 
 // 查询具体某一条公告
