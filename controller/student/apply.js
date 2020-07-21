@@ -52,9 +52,10 @@ async function payMoney (sid) {
 // 获取所有专业信息
 async function findAllMajor () {
   const major = await models.Major.findAll();
+  let data = major.map(item => item.dataValues);
   return {
     ...tips.GET_INFO_SUCCESS,
-    data: major.map(item => item.dataValues),
+    data,
   };
 }
 

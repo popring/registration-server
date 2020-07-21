@@ -42,8 +42,9 @@ npm run start
 
 - [x] jwt 鉴权< `student`, `admin` >
 - [x] 修改返回数据的 `http` 状态码
-- [ ] 使用 `orm` 模式调用数据库
-- [ ] API文档
+- [x] 使用 `orm` 模式调用数据库
+- [x] API文档（示例）
+- [ ] 用户密码进行加密（选做）
 
 学生端
 

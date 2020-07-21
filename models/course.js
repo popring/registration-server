@@ -20,5 +20,10 @@ module.exports = (sequelize, DataTypes) => {
       // 表的名称
       tableName: "course",
     });
+  Course.associate = function(models) {
+    models.Course.hasMany(models.Score, {
+      foreignKey: "cid",
+    });
+  };
   return Course;
 };

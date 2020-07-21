@@ -1,10 +1,11 @@
+
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("Notice", {
-      nid: {
+  const Notice = sequelize.define("Notice", {
+      Nid: {
         type: DataTypes.INTEGER,
         primaryKey: true,
       },
-      aid: {
+      Aid: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
@@ -28,4 +29,12 @@ module.exports = (sequelize, DataTypes) => {
       // 表的名称
       tableName: "notice",
     });
+
+  // 设置外键
+  Notice.associate = function(models) {
+    models.Notice.belongsTo(models.Admin, {
+      foreignKey: "Aid",
+    })
+  }
+  return Notice;
 };

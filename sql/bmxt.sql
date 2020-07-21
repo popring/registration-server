@@ -11,7 +11,7 @@
  Target Server Version : 50547
  File Encoding         : 65001
 
- Date: 09/06/2020 13:03:04
+ Date: 21/07/2020 17:56:46
 */
 
 SET NAMES utf8mb4;
@@ -40,7 +40,7 @@ INSERT INTO `admin` VALUES (2, 'root', '123');
 DROP TABLE IF EXISTS `course`;
 CREATE TABLE `course`  (
   `Cid` int(11) NOT NULL AUTO_INCREMENT,
-  `Cname` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `Cname` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '科目名称',
   `Callgrade` int(11) NOT NULL COMMENT '总分',
   PRIMARY KEY (`Cid`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Compact;
@@ -73,15 +73,29 @@ CREATE TABLE `grade`  (
 INSERT INTO `grade` VALUES (202001, 1, 85);
 INSERT INTO `grade` VALUES (202001, 2, 74);
 INSERT INTO `grade` VALUES (202001, 3, 68);
-INSERT INTO `grade` VALUES (202002, 2, 75);
-INSERT INTO `grade` VALUES (202002, 3, 78);
+INSERT INTO `grade` VALUES (202002, 1, 78);
 INSERT INTO `grade` VALUES (202002, 4, 70);
-INSERT INTO `grade` VALUES (202003, 2, 72);
-INSERT INTO `grade` VALUES (202003, 3, 80);
-INSERT INTO `grade` VALUES (202003, 4, 78);
-INSERT INTO `grade` VALUES (202012, 2, 23);
-INSERT INTO `grade` VALUES (202012, 3, 87);
-INSERT INTO `grade` VALUES (202012, 4, 98);
+INSERT INTO `grade` VALUES (202003, 1, 72);
+INSERT INTO `grade` VALUES (202003, 6, 80);
+INSERT INTO `grade` VALUES (202004, 1, 65);
+INSERT INTO `grade` VALUES (202004, 7, 87);
+INSERT INTO `grade` VALUES (202005, 1, 89);
+INSERT INTO `grade` VALUES (202005, 2, 87);
+INSERT INTO `grade` VALUES (202005, 3, 68);
+INSERT INTO `grade` VALUES (202011, 1, 76);
+INSERT INTO `grade` VALUES (202011, 5, 84);
+INSERT INTO `grade` VALUES (202012, 1, 68);
+INSERT INTO `grade` VALUES (202012, 4, 72);
+INSERT INTO `grade` VALUES (202013, 1, 65);
+INSERT INTO `grade` VALUES (202013, 4, 90);
+INSERT INTO `grade` VALUES (202014, 1, 90);
+INSERT INTO `grade` VALUES (202014, 2, 90);
+INSERT INTO `grade` VALUES (202014, 3, 90);
+INSERT INTO `grade` VALUES (202020, 1, 49);
+INSERT INTO `grade` VALUES (202020, 2, 80);
+INSERT INTO `grade` VALUES (202020, 3, 81);
+INSERT INTO `grade` VALUES (202021, 1, 66);
+INSERT INTO `grade` VALUES (202021, 5, 90);
 
 -- ----------------------------
 -- Table structure for major
@@ -92,13 +106,16 @@ CREATE TABLE `major`  (
   `mname` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '专业名称',
   `cids` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '课程 id 使用 , 分割',
   PRIMARY KEY (`mid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3003 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 3006 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of major
 -- ----------------------------
 INSERT INTO `major` VALUES (3001, '计算机科学与技术', '1,2,3');
-INSERT INTO `major` VALUES (3002, '会计', '2,3,4');
+INSERT INTO `major` VALUES (3002, '会计', '1,6');
+INSERT INTO `major` VALUES (3003, '学前教育', '1,4');
+INSERT INTO `major` VALUES (3004, '土木工程', '1,5');
+INSERT INTO `major` VALUES (3005, '市场营销', '1,7');
 
 -- ----------------------------
 -- Table structure for notice
@@ -137,16 +154,20 @@ CREATE TABLE `process`  (
 -- ----------------------------
 -- Records of process
 -- ----------------------------
-INSERT INTO `process` VALUES (202001, 1, 1, 0, 0, 0);
+INSERT INTO `process` VALUES (202001, 1, 1, 2, 0, 0);
 INSERT INTO `process` VALUES (202002, 1, 1, 1, 1, 1);
 INSERT INTO `process` VALUES (202003, 0, 0, 0, 0, 0);
-INSERT INTO `process` VALUES (202007, 0, 0, 0, 0, 0);
-INSERT INTO `process` VALUES (202008, 0, 0, 0, 0, 0);
-INSERT INTO `process` VALUES (202009, 0, 0, 0, 0, 0);
-INSERT INTO `process` VALUES (202010, 0, 0, 0, 0, 0);
 INSERT INTO `process` VALUES (202011, 1, 1, 1, 0, 0);
-INSERT INTO `process` VALUES (202012, 1, 0, 0, 0, 0);
-INSERT INTO `process` VALUES (202013, 0, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202012, 1, 1, 0, 0, 0);
+INSERT INTO `process` VALUES (202013, 1, 1, 1, 1, 2);
+INSERT INTO `process` VALUES (202014, 1, 1, 1, 1, 2);
+INSERT INTO `process` VALUES (202015, 0, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202016, 0, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202017, 0, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202018, 0, 0, 0, 0, 0);
+INSERT INTO `process` VALUES (202019, 1, 1, 0, 0, 0);
+INSERT INTO `process` VALUES (202020, 1, 1, 1, 1, 2);
+INSERT INTO `process` VALUES (202021, 1, 1, 1, 1, 1);
 
 -- ----------------------------
 -- Table structure for student
@@ -165,23 +186,25 @@ CREATE TABLE `student`  (
   PRIMARY KEY (`Sid`, `Sphone`) USING BTREE,
   INDEX `mid`(`Smajor`) USING BTREE,
   CONSTRAINT `mid` FOREIGN KEY (`Smajor`) REFERENCES `major` (`mid`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 202014 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 202022 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of student
 -- ----------------------------
-INSERT INTO `student` VALUES (202001, '李亚', '123', '2020-06-05', '群众', '141126190512143939', '武汉学院', 3001, '13245678901');
-INSERT INTO `student` VALUES (202002, '张三', '123', '2020-01-01', '群众x', '441800398903289750', '武汉学院xx', 3002, '13245678909');
-INSERT INTO `student` VALUES (202003, '陈乔', '123', '2020-01-01', NULL, '441800398903289750', NULL, 3002, '15935678939');
-INSERT INTO `student` VALUES (202004, '王楠', '123', '2020-01-01', '群众', '441800198903289751', '武汉学院', 3001, '15935678902');
-INSERT INTO `student` VALUES (202005, '赵佳', '123', '1997-03-20', '团员', '542121197601289652', '湖北理工学院', 3001, '13345671234');
-INSERT INTO `student` VALUES (202007, NULL, '123', NULL, NULL, NULL, NULL, NULL, '17582912152');
-INSERT INTO `student` VALUES (202008, NULL, '123', NULL, NULL, NULL, NULL, NULL, '17129904573');
-INSERT INTO `student` VALUES (202009, NULL, '123', NULL, NULL, NULL, NULL, NULL, '17129904573');
-INSERT INTO `student` VALUES (202010, NULL, '123', NULL, NULL, NULL, NULL, NULL, '17129904573');
-INSERT INTO `student` VALUES (202011, '张三丰', '123', '2002-01-10', '团员', '441800198903289750', '武汉学院', 3002, '17060148893');
-INSERT INTO `student` VALUES (202012, '王炸', '123', '2019-11-12', '群众', '141126190512143939', '武汉学院', 3002, '15874322134');
-INSERT INTO `student` VALUES (202013, NULL, '123', NULL, NULL, NULL, NULL, NULL, '18571568737');
+INSERT INTO `student` VALUES (202001, '李亚', '123', '1995-07-13', '群众', '141126190512143939', '湖北理工学院', 3001, '13245678901');
+INSERT INTO `student` VALUES (202002, '张三', '123', '1998-12-24', '群众', '441800398903289750', '湖北理工学院', 3003, '13245678909');
+INSERT INTO `student` VALUES (202003, '陈乔', '123', '1999-07-22', '团员', '441800398903289750', '湖北理工学院', 3002, '15935678939');
+INSERT INTO `student` VALUES (202011, '张娜', '123', '1999-03-18', '团员', '441800198903289750', '湖北理工学院', 3004, '17060148893');
+INSERT INTO `student` VALUES (202012, '王莉', '123', '1997-07-25', '群众', '141126190512143939', '湖北理工学院', 3003, '15874322134');
+INSERT INTO `student` VALUES (202013, '好好', '123', '2020-06-01', '党员', '130803194612220857', '湖北理工学院', 3003, '15827111542');
+INSERT INTO `student` VALUES (202014, '郝雪彪', '123', '2020-06-02', '群众', '142327190412024121', '湖北理工学院', 3001, '18267318447');
+INSERT INTO `student` VALUES (202015, NULL, '123', NULL, NULL, NULL, NULL, NULL, '12312312311');
+INSERT INTO `student` VALUES (202016, NULL, '123', NULL, NULL, NULL, NULL, NULL, '12312312311');
+INSERT INTO `student` VALUES (202017, NULL, '123', NULL, NULL, NULL, NULL, NULL, '12312312311');
+INSERT INTO `student` VALUES (202018, NULL, '123', NULL, NULL, NULL, NULL, NULL, '12312312311');
+INSERT INTO `student` VALUES (202019, '张某人', '123', '2020-01-02', '群众', '441800398903289751', '武汉学院', 3002, '12312312311');
+INSERT INTO `student` VALUES (202020, '法外狂徒张某人', '123', '2020-07-07', '群众', '110101192007217912', '武汉商贸职业学院', 3001, '15119836979');
+INSERT INTO `student` VALUES (202021, '周领袖', '123', '1982-06-08', '精神领袖', '110101192007218958', 'xxx看守所', 3004, '18050753400');
 
 -- ----------------------------
 -- Triggers structure for table student

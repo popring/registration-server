@@ -70,7 +70,7 @@ async function adminLogin (username, userpwd) {
   });
 
   // 登录失败
-  if (res.length === null) {
+  if (res === null) {
     return Tips.LOGIN_ERROR;
   }
 

@@ -19,5 +19,12 @@ module.exports = (sequelize, DataTypes) => {
       freezeTableName: true,
     },
   );
+
+  // 设置外键
+  Admin.associate = function(models) {
+    models.Admin.hasMany(models.Notice, {
+      foreignKey: "Aid"
+    });
+  };
   return Admin;
 };

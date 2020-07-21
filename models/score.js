@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("Score",
+  const Score = sequelize.define("Score",
     {
       sid: {
         type: DataTypes.INTEGER,
@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       cid: {
         // TODO 外键
         type: DataTypes.INTEGER,
+        primaryKey: true,
       },
       grade: {
         type: DataTypes.INTEGER,
@@ -22,4 +23,14 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "grade",
     },
   );
+  Score.associate = function(models) {
+    models.Score.belongsTo(models.Course, {
+      foreignKey: "cid",
+    });
+    // models.Score.hasOne(models.Student, {
+    //   foreignKey: "Sid",
+    // });
+  };
+
+  return Score;
 };
