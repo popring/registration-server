@@ -1,37 +1,47 @@
-const pool = require("../config/db");
 const Tips = require("../config/Tips");
 const jwt = require("jsonwebtoken");
 const PRIVATEKEY = require("../config/key");
+const models = require("../models/index.js");
+
+const Op = models.Sequelize.Op;
 
 /**
  * 学生登录
- * @param {string}} username 用户名
- * @param {string} userpwd 密码
+ * @param sidOrSphone sid或手机号码
+ * @param userpwd 密码
+ * @param role  角色
  */
-async function stuLogin(username, userpwd, role = "student") {
+async function stuLogin (sidOrSphone, userpwd, role = "student") {
   if (role !== "student") {
     return {};
   }
-  let res = await pool.pquery(
-    "select sid,sname,sphone from student where (sid=? or sphone=?) and spwd=?",
-    [username, username, userpwd]
-  );
+
+  let res = await models.Student.findOne({
+    attributes: ["sid", "sname", "sphone"],
+    where: {
+      [Op.or]: [{ sid: sidOrSphone }, { sphone: sidOrSphone }],
+      spwd: userpwd,
+    },
+  });
 
   // 登录失败
-  if (res.length !== 1) {
+  if (res === null) {
     return Tips.LOGIN_ERROR;
   }
-  res = res[0];
+
+  const dataValue = res.dataValues;
   // 查询学生报名进度
-  let resProcess = await pool.pquery(
-    "select apply,pay,`check`,addgrade,offer from process where sid=?",
-    [res.sid]
-  );
+  let resProcess = await models.Process.findOne({
+    attributes: ["sid", "apply", "pay", "check", "addgrade", "offer"],
+    where: {
+      sid: dataValue.sid,
+    },
+  });
   const payload = {
-    id: res.sid,
-    username: res.sname,
+    id: dataValue.sid,
+    username: dataValue.sname,
     role: role,
-    phone: res.sphone,
+    phone: dataValue.sphone,
     process: resProcess[0],
   };
 
@@ -40,7 +50,7 @@ async function stuLogin(username, userpwd, role = "student") {
   });
   return {
     ...Tips.LOGIN_SUCCESS,
-    token: token,
+    token,
     payload,
   };
 }
@@ -50,23 +60,26 @@ async function stuLogin(username, userpwd, role = "student") {
  * @param {string} username 用户名
  * @param {string} userpwd 密码
  */
-async function adminLogin(username, userpwd) {
-  let res = await pool.pquery(
-    "select aid,aname from admin where aname=? and apwd=?",
-    [username, userpwd]
-  );
+async function adminLogin (username, userpwd) {
+  let res = await models.Admin.findOne({
+    attributes: ["aid", "aname"],
+    where: {
+      aname: username,
+      apwd: userpwd,
+    },
+  });
 
   // 登录失败
-  if (res.length !== 1) {
+  if (res === null) {
     return Tips.LOGIN_ERROR;
   }
-  res = res[0];
+
+  res = res.dataValues;
   const payload = {
     id: res.aid,
     username: res.aname,
     role: "admin",
   };
-
   const token = jwt.sign(payload, PRIVATEKEY, {
     expiresIn: "24h",
   });
@@ -77,14 +90,20 @@ async function adminLogin(username, userpwd) {
   };
 }
 
-async function stuSignUp(newUserInfo) {
-  // 手机号，密码
-  const data = await pool.pquery(
-    `INSERT INTO student (Sphone, Spwd) VALUE(?, ?)`,
-    [newUserInfo.sphone, newUserInfo.userpwd]
-  );
-  console.log(data);
-  if (data.affectedRows === 1) {
+/**
+ * 学生注册
+ * @param newUserInfo 学生注册信息
+ * @returns {Promise<{code: number, message: string}>}
+ */
+async function stuSignUp (newUserInfo) {
+  const res = await models.Student.create({
+    Sphone: newUserInfo.sphone,
+    Spwd: newUserInfo.userpwd,
+  }, {
+    isNewRecord: true,
+  });
+  const dataValues = res && res.dataValues;
+  if (dataValues) {
     return {
       code: 1,
       message: "注册成功",
@@ -100,7 +119,7 @@ async function stuSignUp(newUserInfo) {
  * 验证token是否有效
  * @param {string} token 用户唯一标识
  */
-function verfiy(token) {
+function verfiy (token) {
   try {
     const result = jwt.verify(token, PRIVATEKEY);
     if (!result) {

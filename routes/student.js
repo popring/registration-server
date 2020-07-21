@@ -11,7 +11,7 @@ router.use("/", stuAuth);
 // 学生报名进度查询
 router.get("/process", async function (req, res) {
   const data = await ControllerProcess.findOne(res.userinfo.id);
-  res.send({ code: 1, data });
+  res.send(data);
 });
 
 // test 接口
@@ -21,14 +21,14 @@ router.get("/test", function (req, res) {
 
 // 查询公告
 router.get("/notice", async function (req, res) {
-  const data = await ControllerNotice.findAll();
-  res.send({ code: 1, data });
+  const data = await ControllerNotice.findNotice();
+  res.send(data);
 });
 
 // 查询具体某一条公告
 router.get("/notice/:nid", async function (req, res) {
-  const data = await ControllerNotice.findOne(req.param("nid"));
-  res.send({ code: 1, data });
+  const data = await ControllerNotice.findNotice(req.param("nid"));
+  res.send(data);
 });
 
 // 提交学生信息
