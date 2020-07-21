@@ -28,6 +28,12 @@ npm run start
 
 导入数据库 /sql/bmxt.sql
 
+## 升级更新
+
+>2020年7月20日20点09分
+>
+>- 学生获取所有专业信息接口改变，科目信息修改为返回数组
+
 ## API文档
 
 [RESTful_API.md](./RESTful_API.md) 只有几个简单的案例，没有写完整。
@@ -36,8 +42,9 @@ npm run start
 
 - [x] jwt 鉴权< `student`, `admin` >
 - [x] 修改返回数据的 `http` 状态码
-- [ ] 使用 `orm` 模式调用数据库
-- [ ] API文档
+- [x] 使用 `orm` 模式调用数据库
+- [x] API文档（示例）
+- [ ] 用户密码进行加密（选做）
 
 学生端
 
