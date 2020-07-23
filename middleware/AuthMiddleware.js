@@ -2,25 +2,26 @@ const { VerifyController } = require("../controller/Account");
 
 module.exports = {
   // 学生是否登录验证
-  stuAuth: function (req, res, next) {
+  stuAuth: function(req, res, next) {
     console.log(req.baseUrl, "接口被访问");
     const token = req.get("token");
     const verifyResult = VerifyController(token) || {};
-    if (verifyResult.code === 1) {
+    if (verifyResult.code === 1 && verifyResult.role === "student") {
       res.userinfo = verifyResult;
       next();
     } else {
-      res.send(verifyResult)
+      verifyResult.code === 1 ? res.send(tips.ROLE_FORBIDEN) : res.send(verifyResult);
     }
   },
   // 管理员是否登录验证
-  adminAuth: function (req, res, next) {
+  adminAuth: function(req, res, next) {
     console.log(req.baseUrl, "接口被访问");
-    if (req.query.a) {
-      console.log("已经登陆用户");
+    const token = req.get("token");
+    const verifyResult = VerifyController(token) || {};
+    if (verifyResult.code === 1 && verifyResult.role === "admin") {
+      res.userinfo = verifyResult;
     } else {
-      console.log("没有登陆");
-      return res.send({ data: "未登录，请登陆后重试" });
+      verifyResult.code === 1 ? res.send(tips.ROLE_FORBIDEN) : res.send(verifyResult);
     }
     next();
   },

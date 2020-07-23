@@ -27,5 +27,11 @@ module.exports = (sequelize, DataTypes) => {
       // 表的名称
       tableName: "student",
     });
+
+  Student.associate = function(models) {
+    models.Student.belongsTo(models.Major, {
+      foreignKey: "Smajor",
+    });
+  };
   return Student;
 };

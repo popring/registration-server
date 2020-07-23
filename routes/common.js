@@ -4,7 +4,7 @@ const Account = require("../controller/Account");
 const Tips = require("../config/Tips");
 
 // test index
-router.get("/", function (req, res, next) {
+router.get("/", function (req, res) {
   res.send(Tips.OPERATE_SUCCESS);
 });
 
@@ -32,7 +32,7 @@ router.post("/login", async function (req, res) {
     userinfo.role = "student";
   }
 
-  let result = null;
+  let result;
   switch (userinfo.role) {
     case "student":
       result = await Account.StuLoginController(
