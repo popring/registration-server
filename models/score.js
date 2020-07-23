@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       cid: {
-        // TODO 外键
         type: DataTypes.INTEGER,
         primaryKey: true,
       },
@@ -27,9 +26,6 @@ module.exports = (sequelize, DataTypes) => {
     models.Score.belongsTo(models.Course, {
       foreignKey: "cid",
     });
-    // models.Score.hasOne(models.Student, {
-    //   foreignKey: "Sid",
-    // });
   };
 
   return Score;
