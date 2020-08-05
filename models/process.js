@@ -30,6 +30,11 @@ module.exports = (sequelize, DataTypes) => {
       freezeTableName: true,
       tableName: "process",
     });
+  Process.associate = function(models) {
+    models.Process.belongsTo(models.Student, {
+      foreignKey: "Sid",
+    });
+  };
   return Process;
 };
 

@@ -39,14 +39,12 @@ async function findAllStudent(opt = {}) {
       ["sid", "DESC"],
     ],
   });
-  let data = student && student.rows.map(item => item.dataValues);
   return {
     ...tips.GET_INFO_SUCCESS,
     tableData: {
       limit: opt.limit,
       offset: opt.offset,
-      count: student.count,
-      data: data,
+      ...student,
     },
   };
 }
@@ -66,7 +64,9 @@ async function updateStudent(userInfo) {
     },
   });
   for (const userInfoKey in userInfo) {
-    stu.set(userInfoKey, userInfo[userInfoKey]);
+    if (userInfo.hasOwnProperty(userInfoKey)) {
+      stu.set(userInfoKey, userInfo[userInfoKey]);
+    }
   }
   const res = await stu.save();
   if (res instanceof models.Sequelize.ValidationError) {
