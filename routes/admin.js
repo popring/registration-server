@@ -3,6 +3,7 @@ const { adminAuth } = require("../middleware/AuthMiddleware");
 const ControllerStudent = require("../controller/admin/student");
 const ControllerProcess = require("../controller/student/process");
 const ControllerAudit = require("../controller/admin/audit");
+const ControllerScore = require("../controller/admin/score");
 const router = express.Router();
 
 router.use(adminAuth);
@@ -52,6 +53,25 @@ router.put("/audit/:sid", async function(req, res) {
   } else {
     data = await ControllerAudit.auditNotPassed(sid);
   }
+  res.send(data);
+});
+
+// 查询学生成绩
+router.get("/score", async function(req, res) {
+  const data = await ControllerScore.getAllScore();
+  res.send(data);
+});
+
+// 添加学生成绩
+router.post("/score", async function(req, res) {
+  const data = await ControllerScore.createScore(req.body);
+  res.send(data);
+});
+
+// 修改学生成绩
+router.put("/score/:sid", async function(req, res) {
+  const sid = req.params.sid;
+  const data = await ControllerScore.updateScore(sid, req.body);
   res.send(data);
 });
 

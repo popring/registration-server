@@ -38,7 +38,7 @@ async function auditPassed(sid) {
       sid,
     },
   });
-  if (process === null) {
+  if (process === null || process.check !== 1) {
     return tips.OPERATE_FAILED;
   }
   process.set("check", 1);
@@ -60,7 +60,7 @@ async function auditNotPassed(sid) {
       sid,
     },
   });
-  if (process === null) {
+  if (process === null || process.check !== 1) {
     return tips.OPERATE_FAILED;
   }
   process.set("check", 2);
