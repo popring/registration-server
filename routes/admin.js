@@ -4,6 +4,7 @@ const ControllerStudent = require("../controller/admin/student");
 const ControllerProcess = require("../controller/student/process");
 const ControllerAudit = require("../controller/admin/audit");
 const ControllerScore = require("../controller/admin/score");
+const { body, validationResult } = require("express-validator");
 const router = express.Router();
 
 router.use(adminAuth);
@@ -63,7 +64,13 @@ router.get("/score", async function(req, res) {
 });
 
 // 添加学生成绩
-router.post("/score", async function(req, res) {
+router.post("/score", [
+  body("sid", "请添加正确的sid").isNumeric(),
+], async function(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   const data = await ControllerScore.createScore(req.body);
   res.send(data);
 });
