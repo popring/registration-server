@@ -1,19 +1,16 @@
 const models = require("../../models");
 const tips = require("../../config/Tips");
+const { tableResponse } = require("../../utils/tableResponse");
 
 const Sequelize = models.Sequelize;
 const sequelize = models.sequelize;
+const Op = Sequelize.Op;
 
 /**
  * 查询所有学生成绩
  * @returns {Promise<{code: number, tableData: {}, message: string}>}
  */
-async function getAllScore() {
-  let data = {};
-  data.count = await models.Score.count({
-    distinct: true,
-    col: "sid",
-  });
+async function findAllScore(opt) {
   // 原始 sql
   // SELECT s1.Sid, s1.Sname, s1.Smajor, s2.total_score FROM student as s1,
   // (SELECT `Score`.`Sid`,sum(`grade`) AS `total_score` FROM `grade` AS `Score` GROUP BY `Sid`) as s2
@@ -26,11 +23,30 @@ async function getAllScore() {
   //   ],
   //   group: ["Sid"],
   //   limit: 2,
-  //   offset: 10
+  //   offset: 10,
   // });
+  // return score;
+  // ------------------以下为临时代码-----------------------
+  opt.search = `%${opt.search || ""}%`;
+  opt.offset = Number.parseInt(opt.offset) || 0;
+  opt.limit = Number.parseInt(opt.limit) || 10;
+  let data = {};
+  data.offset = opt.offset;
+  data.limit = opt.limit;
+  data.count = await models.Score.count({
+    distinct: true,
+    col: "sid",
+    where: {
+      Sid: {
+        [Op.like]: `%${opt.search}%`,
+      },
+    },
+  });
   const score = await sequelize.query("SELECT s1.Sid, s1.Sname, s1.Smajor, s2.total_score FROM student as s1,\n" +
     "(SELECT `Score`.`Sid`,sum(`grade`) AS `total_score` FROM `grade` AS `Score` GROUP BY `Sid`) as s2\n" +
-    "WHERE s1.Sid = s2.Sid");
+    "WHERE s1.Sid = s2.Sid AND s1.Sid LIKE ? ORDER BY Sid DESC LIMIT ?, ?", {
+    replacements: [opt.search, opt.offset, opt.limit],
+  });
 
   data.rows = score[0];
   return {
@@ -70,7 +86,6 @@ function createScore(userScoreInfo) {
 }
 
 /**
- * /**
  * 修改已存在的学生成绩信息
  * @param sid 学生id
  * @param userScoreInfo  学生成绩信息 example: {sid: 202021, 1: 98, 2: 89, cid: score}
@@ -104,7 +119,7 @@ function updateScore(sid, userScoreInfo) {
 }
 
 module.exports = {
-  getAllScore,
+  findAllScore,
   createScore,
   updateScore,
 };

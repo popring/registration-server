@@ -81,7 +81,7 @@ async function adminLogin (username, userpwd) {
     role: "admin",
   };
   const token = jwt.sign(payload, PRIVATEKEY, {
-    expiresIn: "7d",
+    expiresIn: "30d",
   });
   return {
     ...Tips.LOGIN_SUCCESS,

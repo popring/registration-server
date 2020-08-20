@@ -1,18 +1,19 @@
 const models = require("../../models");
 const tips = require("../../config/Tips");
+const { tableResponse } = require("../../utils/tableResponse");
 
 const Op = models.Sequelize.Op;
 
 /**
- * 查询带审核的学生
- * @returns {Promise<{code: number, tableData: any, message: string}>}
+ * 查询带审核的学生列表
+ * @param opt
+ * @returns {Promise<{code: number, tableData: awaited <{rows: M[]; count: number}>&{offset: *, limit: *}, message: string}>}
  */
-async function findAllAudit() {
-  const process = await models.Process.findAndCountAll({
-    include: [{
-      model: models.Student,
-      attributes: ["Sid", "Sname", "Sidcard", "Sschool", "Sphone"],
-    }],
+function findAllAudit(opt) {
+  return tableResponse("Process", {
+    include: [
+      { model: "Student", attributes: ["Sid", "Sname", "Sidcard", "Sschool", "Sphone"] },
+    ],
     where: {
       apply: 1,
       pay: 1,
@@ -20,11 +21,8 @@ async function findAllAudit() {
         [Op.ne]: 1,
       },
     },
+    ...opt,
   });
-  return {
-    ...tips.GET_INFO_SUCCESS,
-    tableData: process,
-  };
 }
 
 /**

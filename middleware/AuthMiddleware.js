@@ -19,7 +19,10 @@ module.exports = {
     const token = req.get("token");
     const verifyResult = VerifyController(token) || {};
     if (verifyResult.code === 1 && verifyResult.role === "admin") {
+      // TODO 兼容旧版使用，后期可考虑去除
       res.userinfo = verifyResult;
+      // 新版规范
+      req.tokenInfo = verifyResult;
     } else {
       verifyResult.code === 1 ? res.send(tips.ROLE_FORBIDEN) : res.send(verifyResult);
     }

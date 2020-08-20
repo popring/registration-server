@@ -4,6 +4,7 @@ const ControllerStudent = require("../controller/admin/student");
 const ControllerProcess = require("../controller/student/process");
 const ControllerAudit = require("../controller/admin/audit");
 const ControllerScore = require("../controller/admin/score");
+const ControllerNotice = require("../controller/admin/notice");
 const router = express.Router();
 
 router.use(adminAuth);
@@ -39,7 +40,7 @@ router.delete("/student/:sid", async function(req, res) {
 
 // 查询所有待审核信息
 router.get("/audit", async function(req, res) {
-  const data = await ControllerAudit.findAllAudit();
+  const data = await ControllerAudit.findAllAudit(req.query);
   res.send(data);
 });
 
@@ -58,7 +59,7 @@ router.put("/audit/:sid", async function(req, res) {
 
 // 查询学生成绩
 router.get("/score", async function(req, res) {
-  const data = await ControllerScore.getAllScore();
+  const data = await ControllerScore.findAllScore(req.query);
   res.send(data);
 });
 
@@ -72,6 +73,33 @@ router.post("/score", async function(req, res) {
 router.put("/score/:sid", async function(req, res) {
   const sid = req.params.sid;
   const data = await ControllerScore.updateScore(sid, req.body);
+  res.send(data);
+});
+
+// 查询公告列表
+router.get("/notice", async function(req, res) {
+  const data = await ControllerNotice.findAllNotice(req.query);
+  res.send(data);
+});
+
+// 查询公告列表
+router.get("/notice/:nid", async function(req, res) {
+  const data = await ControllerNotice.findOneNotice(req.params.nid);
+  res.send(data);
+});
+
+// 添加公告
+router.post("/notice", async function(req, res) {
+  const data = await ControllerNotice.createNotice({
+    Aid: req.tokenInfo.id,
+    ...req.body,
+  });
+  res.send(data);
+});
+
+// 删除公告
+router.delete("/notice/:nid", async function(req, res) {
+  const data = await ControllerNotice.deleteNotice(req.params.nid);
   res.send(data);
 });
 

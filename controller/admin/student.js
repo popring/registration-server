@@ -1,5 +1,6 @@
 const models = require("../../models");
 const tips = require("../../config/Tips");
+const { tableResponse } = require("../../utils/tableResponse");
 
 /**
  * 查询指定学生信息
@@ -25,28 +26,16 @@ async function findOneStudent(sid) {
  * @returns {Promise<{code: number, data: *, message: string}>}
  */
 async function findAllStudent(opt = {}) {
-  opt.limit = Number.parseInt(opt.limit) || 10;
-  opt.offset = Number.parseInt(opt.offset) || 0;
-  const student = await models.Student.findAndCountAll({
+  let where = {};
+  if (opt.Smajor) where.Smajor = opt.Smajor;
+  return tableResponse("Student", {
     attributes: ["Sid", "Sname", "Sphone", "Sschool"],
-    include: ["Major"],
-    // 查询数量
-    limit: opt.limit,
-    // 偏移
-    offset: opt.offset,
-    // sid 倒序搜索
-    order: [
-      ["sid", "DESC"],
+    include: [
+      { model: "Major", required: true },
     ],
+    where,
+    ...opt,
   });
-  return {
-    ...tips.GET_INFO_SUCCESS,
-    tableData: {
-      limit: opt.limit,
-      offset: opt.offset,
-      ...student,
-    },
-  };
 }
 
 /**
