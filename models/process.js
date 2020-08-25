@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      timestamps: false,
+      timestamps: true,
       freezeTableName: true,
       tableName: "process",
     });

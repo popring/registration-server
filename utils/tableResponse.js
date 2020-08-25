@@ -3,11 +3,12 @@ const models = require("../models");
 
 const Sequelize = models.Sequelize;
 const Op = Sequelize.Op;
+
 /**
- * 通用表格查询返回
+ *  * 通用表格查询返回
  * @param model string
- * @param options {limit: '', offset: ''}
- * @returns {{code: number, tableData: {[p: string]: *}, message: string}}
+ * @param opt {limit: '', offset: ''}
+ * @returns {Promise<{code: number, tableData: (awaited <{rows: M[]; count: number}>&{offset: number, limit: number}), message: string}>}
  */
 exports.tableResponse = async (model, opt = {}) => {
   let options = {};
@@ -28,8 +29,9 @@ exports.tableResponse = async (model, opt = {}) => {
     if (typeof item.model === "string") item.model = models[item.model];
     return item;
   })) || [];
-  options.group = opt.group || [];
-  options.attributes = opt.attributes || [];
+  if (opt.group) options.group = opt.group;
+  if (opt.attributes) options.attributes = opt.attributes;
+  options.raw = opt.raw || false;
 
   const result = await model.findAndCountAll(options);
   return {

@@ -5,12 +5,14 @@ const { tableResponse } = require("../../utils/tableResponse");
 const Op = models.Sequelize.Op;
 
 /**
+ * /**
  * 查询带审核的学生列表
  * @param opt
- * @returns {Promise<{code: number, tableData: awaited <{rows: M[]; count: number}>&{offset: *, limit: *}, message: string}>}
+ * @returns
  */
 function findAllAudit(opt) {
   return tableResponse("Process", {
+    attributes: ["Sid", "apply", "pay", "check"],
     include: [
       { model: "Student", attributes: ["Sid", "Sname", "Sidcard", "Sschool", "Sphone"] },
     ],
@@ -21,6 +23,7 @@ function findAllAudit(opt) {
         [Op.ne]: 1,
       },
     },
+    order: [["updatedAt", "ASC"]],
     ...opt,
   });
 }
@@ -36,13 +39,13 @@ async function auditPassed(sid) {
       sid,
     },
   });
-  if (process === null || process.check !== 1) {
+  if (process === null) {
     return tips.OPERATE_FAILED;
   }
   process.set("check", 1);
   const res = await process.save();
   if (res instanceof models.Sequelize.ValidationError) {
-    return tips.OPERATE_FAILED;
+    return { ...tips.OPERATE_FAILED, message: res.message };
   }
   return tips.OPERATE_SUCCESS;
 }
@@ -58,7 +61,7 @@ async function auditNotPassed(sid) {
       sid,
     },
   });
-  if (process === null || process.check !== 1) {
+  if (process === null || process.check === 1) {
     return tips.OPERATE_FAILED;
   }
   process.set("check", 2);

@@ -45,9 +45,9 @@ router.get("/audit", async function(req, res) {
 });
 
 // 审核 通过/不通过
-router.put("/audit/:sid", async function(req, res) {
-  const check = Number.parseInt(req.query.check) || 2;
-  const sid = req.params.sid;
+router.put("/audit/", async function(req, res) {
+  const check = Number.parseInt(req.body.check) || 2;
+  const sid = req.body.Sid;
   let data;
   if (check === 1) {
     data = await ControllerAudit.auditPassed(sid);
@@ -82,7 +82,7 @@ router.get("/notice", async function(req, res) {
   res.send(data);
 });
 
-// 查询公告列表
+// 查询公告详情
 router.get("/notice/:nid", async function(req, res) {
   const data = await ControllerNotice.findOneNotice(req.params.nid);
   res.send(data);
