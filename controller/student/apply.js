@@ -6,7 +6,7 @@ const tips = require("../../config/Tips");
  * @param userData 学生个人信息[sid, sname, sbirth, spolitics, sidcard, sschool, smajor]
  * @returns {Promise<{code: number, message: string}>}
  */
-async function submitApply (userData) {
+async function submitApply(userData) {
   // 更改学生相关信息
   const attrs = ["Sname", "Sbirth", "Spolitics", "Sidcard", "Sschool", "Smajor"];
   const student = await models.Student.findOne({
@@ -35,7 +35,7 @@ async function submitApply (userData) {
 }
 
 // 支付操作
-async function payMoney (sid) {
+async function payMoney(sid) {
   const process = await models.Process.findOne({
     where: {
       sid,
@@ -50,8 +50,16 @@ async function payMoney (sid) {
 }
 
 // 获取所有专业信息
-async function findAllMajor () {
-  const major = await models.Major.findAll();
+async function findAllMajor(mid) {
+  let where = {};
+  if (mid !== null) {
+    where.mid = mid;
+  }
+  const major = await models.Major.findAll(
+    {
+      where,
+    },
+  );
   let data = major.map(item => item.dataValues);
   return {
     ...tips.GET_INFO_SUCCESS,

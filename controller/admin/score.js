@@ -1,6 +1,6 @@
 const models = require("../../models");
 const tips = require("../../config/Tips");
-const { tableResponse } = require("../../utils/tableResponse");
+// const { tableResponse } = require("../../utils/tableResponse");
 
 const Sequelize = models.Sequelize;
 const sequelize = models.sequelize;
@@ -61,23 +61,25 @@ async function findAllScore(opt) {
  * @returns {Promise<{code: number, message: string} | {code: number, message: string}>}
  */
 function createScore(userScoreInfo) {
-  const sid = userScoreInfo.sid;
-  delete userScoreInfo.sid;
+  const sid = userScoreInfo.Sid;
+  const scores = userScoreInfo.scores;
+  console.log(sid, scores);
   return sequelize.transaction(async function(t) {
     const courses = [];
-    for (const cou in userScoreInfo) {
+    for (const score of scores) {
       const jsonCourseScore = {
         sid,
-        cid: cou,
-        grade: userScoreInfo[cou],
+        cid: score.cid,
+        grade: parseFloat(score.score),
       };
-      const score = await models.Score.create(jsonCourseScore, { transaction: t });
-      courses.push(score);
+      const course = await models.Score.create(jsonCourseScore, { transaction: t });
+      courses.push(course);
     }
     return courses;
   }).then(() => {
     return tips.OPERATE_SUCCESS;
-  }).catch(() => {
+  }).catch((e) => {
+    console.log(e);
     return {
       ...tips.OPERATE_FAILED,
       message: "请勿重复添加学生成绩，添加失败",
@@ -87,25 +89,25 @@ function createScore(userScoreInfo) {
 
 /**
  * 修改已存在的学生成绩信息
- * @param sid 学生id
  * @param userScoreInfo  学生成绩信息 example: {sid: 202021, 1: 98, 2: 89, cid: score}
  * @returns {Promise<{code: number, message: string} | {code: number, message: string}>}
  */
-function updateScore(sid, userScoreInfo) {
+function updateScore(userScoreInfo) {
+  const sid = userScoreInfo.Sid;
+  const scores = userScoreInfo.scores;
   return sequelize.transaction(async t => {
     const courses = [];
-    for (const cid in userScoreInfo) {
-      const grade = userScoreInfo[cid];
-      let score = await models.Score.findOne({
+    for (const score of scores) {
+      const course = await models.Score.findOne({
         where: {
-          sid,
-          cid,
+          sid: sid,
+          cid: score.cid,
         },
         transaction: t,
       });
-      score.set("grade", grade);
-      await score.save();
-      courses.push(score);
+      course.set("grade", parseFloat(score.score));
+      await course.save();
+      courses.push(course);
     }
     return courses;
   }).then(() => {
@@ -118,8 +120,65 @@ function updateScore(sid, userScoreInfo) {
   });
 }
 
+/**
+ * 获取学生信息及科目分数
+ * @param sid
+ * @param type 可选 add, edit
+ * @returns {Promise<{code: number, message: string}|{code: number, data: {stuInfo: ({Major}|*), couInfo: (*|Uint8Array|BigInt64Array|*[]|Float64Array|Int8Array|Float32Array|Int32Array|Uint32Array|Uint8ClampedArray|BigUint64Array|Int16Array|Uint16Array)}, message: string}>}
+ */
+async function findStuInfoScore(sid, type = "add") {
+  const stuRes = await models.Student.findOne({
+    attributes: ["Sid", "Sname", "Sidcard"],
+    where: {
+      sid,
+    },
+    include: [
+      { model: models.Major },
+    ],
+  });
+  if (stuRes === null) return { ...tips.GET_INFO_FAILED, message: "获取学生信息失败" };
+  let cids = (stuRes.Major && stuRes.Major.get("cids")) || "";
+  // 考试科目信息
+  cids = cids.split(",").filter(v => v.length !== 0);
+  if (cids.length === 0) return { ...tips.GET_INFO_FAILED, message: "获取学生考试科目信息失败" };
+  let couInfo = await models.Course.findAll({
+    where: {
+      cid: {
+        [Op.or]: cids,
+      },
+    },
+    raw: true,
+  });
+  let hasScore = await models.Score.findAll({
+    where: {
+      Sid: sid,
+      cid: {
+        [Op.or]: cids,
+      },
+    },
+  });
+  if (hasScore.length !== 0 && type !== "edit") {
+    return { ...tips.GET_INFO_FAILED, message: "该生成绩已录入，请勿重复录入" };
+  }
+  if (type === "edit") {
+    couInfo = couInfo.map((item) => {
+      const index = hasScore.findIndex((v) => v.cid === item.cid);
+      item.score = hasScore[index].grade;
+      return item;
+    });
+  }
+  return {
+    ...tips.GET_INFO_SUCCESS,
+    data: {
+      stuInfo: stuRes,
+      couInfo: couInfo,
+    },
+  };
+}
+
 module.exports = {
   findAllScore,
   createScore,
   updateScore,
+  findStuInfoScore,
 };

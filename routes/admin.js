@@ -63,6 +63,12 @@ router.get("/score", async function(req, res) {
   res.send(data);
 });
 
+// 查询某一学生、成绩信息
+router.get("/score/:sid", async function(req, res) {
+  const data = await ControllerScore.findStuInfoScore(req.params.sid, req.query.type);
+  res.send(data);
+});
+
 // 添加学生成绩
 router.post("/score", async function(req, res) {
   const data = await ControllerScore.createScore(req.body);
@@ -70,9 +76,8 @@ router.post("/score", async function(req, res) {
 });
 
 // 修改学生成绩
-router.put("/score/:sid", async function(req, res) {
-  const sid = req.params.sid;
-  const data = await ControllerScore.updateScore(sid, req.body);
+router.put("/score", async function(req, res) {
+  const data = await ControllerScore.updateScore(req.body);
   res.send(data);
 });
 

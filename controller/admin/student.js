@@ -53,7 +53,7 @@ async function updateStudent(userInfo) {
     },
   });
   for (const userInfoKey in userInfo) {
-    if (userInfo.hasOwnProperty(userInfoKey)) {
+    if (userInfo.hasOwnProperty(userInfoKey) && userInfoKey !== "Major") {
       stu.set(userInfoKey, userInfo[userInfoKey]);
     }
   }
