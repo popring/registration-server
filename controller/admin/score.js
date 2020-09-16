@@ -76,7 +76,14 @@ function createScore(userScoreInfo) {
       courses.push(course);
     }
     return courses;
-  }).then(() => {
+  }).then(async () => {
+    const process = await models.Process.findOne({
+      where: {
+        sid,
+      },
+    });
+    process.set("addgrade", 1);
+    await process.save();
     return tips.OPERATE_SUCCESS;
   }).catch((e) => {
     console.log(e);
@@ -176,9 +183,50 @@ async function findStuInfoScore(sid, type = "add") {
   };
 }
 
+/**
+ * 批量录取学生
+ * @returns {Promise<{code: number, message: string}>}
+ */
+async function offerScore() {
+  let res = await sequelize.query("SELECT s1.Sid,s1.Sname,s1.Smajor,s2.total_score FROM student AS s1,(\n" +
+    "SELECT `Score`.`Sid`,sum(`grade`) AS `total_score` FROM `grade` AS `Score` GROUP BY `Sid`) AS s2 WHERE s1.Sid=s2.Sid AND s2.total_score>=?  ORDER BY total_score DESC", {
+    replacements: [200],
+  });
+  res = res[0];
+  let offerStu = await models.Process.findAll({
+    where: {
+      Sid: {
+        [Op.or]: res.map(v => v.Sid),
+      },
+    },
+  });
+  for (const offerStuElement of offerStu) {
+    offerStuElement.set("offer", 1);
+    await offerStuElement.save();
+  }
+  res = await sequelize.query("SELECT s1.Sid,s1.Sname,s1.Smajor,s2.total_score FROM student AS s1,(\n" +
+    "SELECT `Score`.`Sid`,sum(`grade`) AS `total_score` FROM `grade` AS `Score` GROUP BY `Sid`) AS s2 WHERE s1.Sid=s2.Sid AND s2.total_score<?  ORDER BY total_score DESC", {
+    replacements: [200],
+  });
+  res = res[0];
+  let noOfferStu = await models.Process.findAll({
+    where: {
+      Sid: {
+        [Op.or]: res.map(v => v.Sid),
+      },
+    },
+  });
+  for (const offerStuElement of noOfferStu) {
+    offerStuElement.set("offer", 2);
+    await offerStuElement.save();
+  }
+  return { ...tips.OPERATE_SUCCESS, message: "操作成功" };
+}
+
 module.exports = {
   findAllScore,
   createScore,
   updateScore,
   findStuInfoScore,
+  offerScore,
 };

@@ -6,7 +6,7 @@ async function findScore (sid) {
     where: {
       sid,
     },
-    include: ["Course"],
+    include: [models.Course],
   });
   if (score === null) {
     return tips.SCORE_NULL;

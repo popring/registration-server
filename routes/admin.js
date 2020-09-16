@@ -108,4 +108,10 @@ router.delete("/notice/:nid", async function(req, res) {
   res.send(data);
 });
 
+// 录取学生
+router.get("/offer", async function(req, res) {
+  const data = await ControllerScore.offerScore();
+  res.send(data);
+});
+
 module.exports = router;

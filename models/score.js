@@ -26,8 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     models.Score.belongsTo(models.Course, {
       foreignKey: "cid",
     });
-  };
-  Score.associate = function(models) {
+
     models.Score.belongsTo(models.Student, {
       foreignKey: "sid",
     });
