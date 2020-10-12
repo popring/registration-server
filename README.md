@@ -2,7 +2,7 @@
 
 软件实训，实操项目。
 
-专升本前端项目：[registration-system](https://github.com/popring/registration-system)
+考试报名系统前端项目：[registration-system](https://github.com/popring/registration-system)
 
 ## 采用技术
 
