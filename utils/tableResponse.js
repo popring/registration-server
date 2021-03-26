@@ -5,7 +5,7 @@ const Sequelize = models.Sequelize;
 const Op = Sequelize.Op;
 
 /**
- *  * 通用表格查询返回
+ * 通用表格查询返回
  * @param model string
  * @param opt {limit: '', offset: ''}
  * @returns {Promise<{code: number, tableData: (awaited <{rows: M[]; count: number}>&{offset: number, limit: number}), message: string}>}

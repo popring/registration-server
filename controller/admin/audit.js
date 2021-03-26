@@ -5,7 +5,6 @@ const { tableResponse } = require("../../utils/tableResponse");
 const Op = models.Sequelize.Op;
 
 /**
- * /**
  * 查询带审核的学生列表
  * @param opt
  * @returns
