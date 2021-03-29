@@ -2,3 +2,4 @@ node_modules
 .vscode
 PrivateKey.key
 .idea
+.DS_Store
