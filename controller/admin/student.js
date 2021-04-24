@@ -1,6 +1,7 @@
 const models = require("../../models");
 const tips = require("../../config/Tips");
 const { tableResponse } = require("../../utils/tableResponse");
+const Op = models.Sequelize.Op;
 
 /**
  * 查询指定学生信息
@@ -27,13 +28,17 @@ async function findOneStudent(sid) {
  */
 async function findAllStudent(opt = {}) {
   let where = {};
-  if (opt.Smajor) where.Smajor = opt.Smajor;
+  if (opt.major) where.Smajor = opt.major;
+  where.Sname = {
+    [Op.like]: `%${opt.search}%`,
+  }
+  console.log('where', where)
   return tableResponse("Student", {
     attributes: ["Sid", "Sname", "Sphone", "Sschool"],
     include: [
       { model: "Major", required: true },
     ],
-    where,
+    where: where,
     ...opt,
   });
 }

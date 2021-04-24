@@ -5,6 +5,7 @@ const ControllerProcess = require("../controller/student/process");
 const ControllerAudit = require("../controller/admin/audit");
 const ControllerScore = require("../controller/admin/score");
 const ControllerNotice = require("../controller/admin/notice");
+const ControllerApply = require("../controller/student/apply");
 const router = express.Router();
 
 router.use(adminAuth);
@@ -113,5 +114,19 @@ router.get("/offer", async function(req, res) {
   const data = await ControllerScore.offerScore();
   res.send(data);
 });
+
+// 录取某位学生
+router.get('/offer/:sid', async function (req, res) {
+  const data = await ControllerScore.offerScoreOne(req.params.sid, req.query.offer)
+  res.send(data)
+})
+
+// 获取所有专业信息
+router.get("/major", async function(req, res) {
+  let mid = (req.query && req.query.mid) || null;
+  const data = await ControllerApply.findAllMajor(mid);
+  res.send(data);
+});
+
 
 module.exports = router;

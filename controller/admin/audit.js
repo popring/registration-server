@@ -10,6 +10,18 @@ const Op = models.Sequelize.Op;
  * @returns
  */
 function findAllAudit(opt) {
+  // console.log(opt);
+  // console.log((opt.check !=='' || opt.check !== 0) ? opt.check : {
+  //   [Op.ne]: 1,
+  // });
+  let check = {}
+  if(opt.check === '') {
+    check = {
+      [Op.ne]: 1,
+    }
+  } else {
+    check = opt.check
+  }
   return tableResponse("Process", {
     attributes: ["Sid", "apply", "pay", "check"],
     include: [
@@ -18,9 +30,7 @@ function findAllAudit(opt) {
     where: {
       apply: 1,
       pay: 1,
-      check: {
-        [Op.ne]: 1,
-      },
+      check: check,
     },
     order: [["updatedAt", "ASC"]],
     ...opt,

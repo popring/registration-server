@@ -27,28 +27,92 @@ async function findAllScore(opt) {
   // });
   // return score;
   // ------------------以下为临时代码-----------------------
-  opt.search = `%${opt.search || ""}%`;
+  // 搜索内容
+  opt.search = opt.search || "";
+  // 偏移
   opt.offset = Number.parseInt(opt.offset) || 0;
+  // 当前页显示条数
   opt.limit = Number.parseInt(opt.limit) || 10;
+  //
+  opt.offer = opt.offer === undefined ? "*" : opt.offer;
+
+  // 专业
+  opt.major = opt.major || "";
+
+  // opt.offer
   let data = {};
   data.offset = opt.offset;
   data.limit = opt.limit;
-  data.count = await models.Score.count({
+  // data.count = await models.Student.count({
+  //   distinct: true,
+  //   col: "sid",
+  //   where: {
+  //     [Op.or]: {
+  //       Sid: {
+  //         [Op.like]: `%${opt.search}%`,
+  //       },
+  //       Sname: {
+  //         [Op.like]: `%${opt.search}%`,
+  //       },
+  //     }
+  //   },
+  //   include: [{
+  //     model: models.Process,
+  //     where: {
+  //       addgrade: 1,
+  //       // offer 为 -1 展示没有进行录取或不录取操作
+  //       // offer: ''
+  //     },
+  //   }, {
+  //     model: models.Score,
+  //   }],
+  // });
+
+  const rowsAndData = await models.Student.findAndCountAll({
     distinct: true,
     col: "sid",
+    attributes: ["Sid", "Sname", "Sphone", "Smajor"],
     where: {
-      Sid: {
-        [Op.like]: `%${opt.search}%`,
+      [Op.or]: {
+        Sid: {
+          [Op.like]: `%${opt.search}%`,
+        },
+        Sname: {
+          [Op.like]: `%${opt.search}%`,
+        },
       },
+      Smajor: !opt.major ? { [Op.not]: null } : opt.major,
     },
+    limit: opt.limit,
+    offset: opt.offset,
+    include: [{
+      model: models.Process,
+      where: {
+        addgrade: "1",
+        offer: ["0", "1", "2"].some(item => item === String(opt.offer)) ? opt.offer :
+          {
+            [Op.not]: null,
+          },
+      },
+      attributes: ["offer"],
+      order: [["offer", "asc"]],
+    }, {
+      model: models.Score,
+      order: "desc",
+      attributes: ["sid", "cid", "grade"],
+    }],
   });
-  const score = await sequelize.query("SELECT s1.Sid, s1.Sname, s1.Smajor, s2.total_score FROM student as s1,\n" +
-    "(SELECT `Score`.`Sid`,sum(`grade`) AS `total_score` FROM `grade` AS `Score` GROUP BY `Sid`) as s2\n" +
-    "WHERE s1.Sid = s2.Sid AND s1.Sid LIKE ? ORDER BY Sid DESC LIMIT ?, ?", {
-    replacements: [opt.search, opt.offset, opt.limit],
-  });
-
-  data.rows = score[0];
+  data.count = rowsAndData.count;
+  data.rows = rowsAndData.rows;
+  // const score = await sequelize.query("SELECT s1.Sid, s1.Sname, s1.Smajor, s2.total_score FROM student as s1,\n" +
+  //   "(SELECT `Score`.`Sid`,sum(`grade`) AS `total_score` FROM `grade` AS `Score` GROUP BY `Sid`) as s2\n" +
+  //   "WHERE s1.Sid = s2.Sid AND s1.Sid LIKE ? ORDER BY Sid DESC LIMIT ?, ?",
+  //   {
+  //     replacements: [opt.search, opt.offset, opt.limit],
+  //   },
+  // );
+  //
+  // data.rows = score[0];
   return {
     ...tips.GET_INFO_SUCCESS,
     tableData: data,
@@ -223,10 +287,28 @@ async function offerScore() {
   return { ...tips.OPERATE_SUCCESS, message: "操作成功" };
 }
 
+/**
+ * 录取某位学生
+ * @param sid
+ * @param offer 1为录取，2为不录取
+ * @returns {Promise<{code: number, message: string}>}
+ */
+async function offerScoreOne(sid, offer) {
+  let process = await models.Process.findOne({
+    where: {
+      sid,
+    },
+  });
+  process.set("offer", parseInt(offer));
+  await process.save();
+  return { ...tips.OPERATE_SUCCESS, message: "操作成功" };
+}
+
 module.exports = {
   findAllScore,
   createScore,
   updateScore,
   findStuInfoScore,
   offerScore,
+  offerScoreOne,
 };

@@ -32,6 +32,12 @@ module.exports = (sequelize, DataTypes) => {
     models.Student.belongsTo(models.Major, {
       foreignKey: "Smajor",
     });
+    models.Student.hasOne(models.Process, {
+      foreignKey: "Sid",
+    });
+    models.Student.hasMany(models.Score, {
+      foreignKey: "Sid",
+    });
   };
   return Student;
 };
